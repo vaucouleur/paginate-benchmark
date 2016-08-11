@@ -76,7 +76,7 @@ module.exports.report = function (benchmarks, next) {
 };
 
 
-module.exports.start = function () {
+module.exports.start = function (next) {
     return async.waterfall(
         [
             module.exports.connect,
@@ -84,8 +84,14 @@ module.exports.start = function () {
             module.exports.seed,
             module.exports.benchmark,
             module.exports.report
-        ]
+        ], next
     );
 };
 
-module.exports.start();
+module.exports.start(function(err) {
+    if (err) {
+        console.log(err);
+        return process.exit(1);
+    }
+    return process.exit();
+});
