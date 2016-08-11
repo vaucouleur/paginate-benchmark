@@ -2,7 +2,7 @@
   "name": "paginate-benchmark",
   "version": "1.0.0",
   "description": "Benchmarking of pagination implementation options for Mongoose (MongoDB)",
-  "main": "index.js",
+  "main": "paginate-benchmark.js",
   "scripts": {
     "test": "mocha"
   },
