@@ -4,7 +4,7 @@
   "description": "Benchmarking of pagination implementation options for Mongoose (MongoDB)",
   "main": "paginate-benchmark.js",
   "scripts": {
-    "test": "mocha"
+    "start": "node paginate-benchmark.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,5 @@
     "pretty-time": "^0.2.0"
   },
   "devDependencies": {
-    "mocha": "^3.0.2"
   }
 }
