@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose'),
     async = require('async'),
+    pretty = require('pretty-time'),
     articleModel = require('./article.model.js');
 
 module.exports.connect = function (next) {
@@ -33,9 +34,9 @@ module.exports.seed = function (commandResult, next) {
 module.exports.timing = function (f, next) {
     var start = process.hrtime();
     return f(function () {
-        // divide by a million to get nano to milli
-        var elapsed = process.hrtime(start)[1] / 1000000;
-        return next(null, elapsed);
+        var time = process.hrtime(start);
+        var prettyTiming = pretty(time);
+        return next(null, prettyTiming);
     });
 };
 
@@ -49,8 +50,10 @@ module.exports.strategy1 = function (next) {
 
 module.exports.strategy2 = function (next) {
     return module.exports.timing(function (cb) {
-        // to do
-        return cb();
+        // to do.. dummy waiting
+        setTimeout(function() {
+            return cb();
+        }, 3000);
     }, next);
 };
 
