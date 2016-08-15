@@ -5,6 +5,11 @@ var mongoose = require('mongoose'),
     pretty = require('pretty-time'),
     articleModel = require('./article.model.js');
 
+var _totalArticlesToSeed = 10000;
+var _totalArticlesToQuery = 10000;
+var _pageIndex = (250); // zero based index for use with Mongoose's .skip() method
+var _take = 20;
+
 module.exports.connect = function (next) {
     var uri = 'mongodb://localhost/paginate-benchmark';
     var options = {
@@ -21,7 +26,7 @@ module.exports.remove = function (next) {
 module.exports.seed = function (commandResult, next) {
 
     var articles = [];
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < _totalArticlesToSeed; i++) {
         articles.push({
             title: 'Dummy title ' + i,
             content: '1234567890 1234567890 1234567890 1234567890 1234567890'
@@ -42,7 +47,7 @@ module.exports.timing = function (f, next) {
 
 module.exports.strategy1 = function (next) {
     return module.exports.timing(function (cb) {
-        return mongoose.model('Article').find({}).skip(5000).limit(20).exec(function (err, c) {
+        return mongoose.model('Article').find({}).skip(_pageIndex * _take).limit(_take).exec(function (err, c) {
             return cb();
         })
     }, next);
@@ -50,10 +55,25 @@ module.exports.strategy1 = function (next) {
 
 module.exports.strategy2 = function (next) {
     return module.exports.timing(function (cb) {
-        // to do.. dummy waiting
-        setTimeout(function() {
-            return cb();
-        }, 3000);
+        var query = mongoose.model('Article').find({}).limit(_totalArticlesToQuery);
+
+        return query.count(function (err, count) {
+            query.skip(_pageIndex * _take).limit(_take).exec('find', function (err, articles) {
+                return cb();
+            });
+        })
+    }, next);
+};
+
+module.exports.strategy2_withSortOnIndexedField = function (next) {
+    return module.exports.timing(function (cb) {
+        var query = mongoose.model('Article').find({}).limit(_totalArticlesToQuery).sort('_id');
+
+        return query.count(function (err, count) {
+            query.skip(_pageIndex * _take).limit(_take).exec('find', function (err, articles) {
+                return cb();
+            });
+        })
     }, next);
 };
 
@@ -61,7 +81,8 @@ module.exports.benchmark = function (docs, next) {
     return async.series(
         {
             "strategy1": module.exports.strategy1,
-            "strategy2": module.exports.strategy2
+            "strategy2": module.exports.strategy2,
+            "strategy2_withSortOnIndexedField": module.exports.strategy2_withSortOnIndexedField
         }, next);
 };
 
