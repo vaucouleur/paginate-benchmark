@@ -69,3 +69,4 @@ mongod
 *.ntvs*
 *.njsproj
 *.sln
+typings/
