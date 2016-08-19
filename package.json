@@ -19,6 +19,7 @@
     "Benchmarking"
   ],
   "author": "Sebastien Vaucouleur",
+  "contributors": ["Michael Leanos"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vaucouleur/paginate-benchmark/issues"
@@ -26,9 +27,9 @@
   "homepage": "https://github.com/vaucouleur/paginate-benchmark#readme",
   "dependencies": {
     "async": "^2.0.1",
+    "curry": "^1.2.0",
     "mongoose": "^4.5.8",
     "pretty-time": "^0.2.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
