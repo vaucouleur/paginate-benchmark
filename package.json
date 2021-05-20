@@ -1,35 +1,63 @@
 {
-  "name": "paginate-benchmark",
-  "version": "1.0.0",
-  "description": "Benchmarking of pagination implementation options for Mongoose (MongoDB)",
-  "main": "paginate-benchmark.js",
-  "scripts": {
-    "start": "node paginate-benchmark.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vaucouleur/paginate-benchmark.git"
-  },
-  "keywords": [
-    "Mongoose",
-    "MongoDB",
-    "Paginate",
-    "Pagination",
-    "Benchmark",
-    "Benchmarking"
-  ],
-  "author": "Sebastien Vaucouleur",
-  "contributors": ["Michael Leanos"],
+  "version": "0.2.0",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vaucouleur/paginate-benchmark/issues"
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
   },
-  "homepage": "https://github.com/vaucouleur/paginate-benchmark#readme",
+  "scripts": {
+    "start": "node dist/index.js",
+    "help": "tsdx --help",
+    "watch": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "paginate-benchmark",
+  "author": "Sebastien Vaucouleur",
+  "module": "dist/paginate-benchmark.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/paginate-benchmark.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/paginate-benchmark.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@types/mongoose": "^5.10.5",
+    "@types/pretty-time": "^1.1.0",
+    "@size-limit/preset-small-lib": "^4.10.2",
+    "husky": "^6.0.0",
+    "size-limit": "^4.10.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  },
   "dependencies": {
-    "async": "^2.0.1",
-    "curry": "^1.2.0",
-    "mongoose": "^4.5.8",
-    "pretty-time": "^0.2.0"
-  },
-  "devDependencies": {}
+    "mongoose": "^5.12.10",
+    "pretty-time": "^1.1.0"
+  }
 }
