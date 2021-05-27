@@ -24,7 +24,7 @@ describe('benchmark', () => {
     await seed();
     const after = await all();
     expect(after.length).toEqual(totalArticlesToSeed);
-  });
+  }, 10000);
 
   it('should drop', async () => {
     const all = async () => ArticleModel.find({}).exec();
@@ -33,7 +33,7 @@ describe('benchmark', () => {
     await seed();
     const after = await all();
     expect(after.length).toEqual(totalArticlesToSeed);
-  });
+  }, 10000);
 
   it('should run benchmarks', async () => {
     await start();

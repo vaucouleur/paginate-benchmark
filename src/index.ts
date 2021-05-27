@@ -11,6 +11,13 @@ const uri = 'mongodb://localhost/paginate-benchmark';
 
 export { ArticleModel };
 
+export interface PaginationResult<T> {
+  items: T[];
+  total?: number;
+  pageIndex: number;
+  take: number;
+}
+
 interface BenchmarkResult {
   name: string;
   elapsed: number[];
@@ -76,33 +83,50 @@ const doTiming = async (
   return { name, elapsed, withCache };
 };
 
-export type Strategy = () => Promise<Article[]>;
+export type Strategy = () => Promise<PaginationResult<Article>>;
 
-export const strategy1 = async (): Promise<Article[]> => {
-  return ArticleModel.find({})
+export const strategy1 = async (): Promise<PaginationResult<Article>> => {
+  const items = await ArticleModel.find({})
     .skip(pageIndex * take)
     .limit(take)
     .exec();
+  return {
+    pageIndex,
+    take,
+    items,
+  };
 };
 
-export const strategy2 = async (): Promise<Article[]> => {
+export const strategy2 = async (): Promise<PaginationResult<Article>> => {
   const query = ArticleModel.find({}).limit(totalArticlesToQuery);
-  await query.count();
-  return query
+  const total = await query.count();
+  const items = await query
     .skip(pageIndex * take)
     .limit(take)
     .exec();
+  return {
+    total,
+    pageIndex,
+    take,
+    items,
+  };
 };
 
-export const strategy3 = async (): Promise<Article[]> => {
+export const strategy3 = async (): Promise<PaginationResult<Article>> => {
   const query = ArticleModel.find({})
     .limit(totalArticlesToQuery)
     .sort('_id');
-  await query.count().exec();
-  return query
+  const total = await query.count().exec();
+  const items = await query
     .skip(pageIndex * take)
     .limit(take)
     .exec();
+  return {
+    total,
+    pageIndex,
+    take,
+    items,
+  };
 };
 
 const benchmark = async (withCache: boolean): Promise<BenchmarkResult[]> => {
@@ -114,10 +138,11 @@ const benchmark = async (withCache: boolean): Promise<BenchmarkResult[]> => {
 };
 
 const report = async (results: BenchmarkResult[]) => {
-  results.forEach(result => {
-    const withCache = result.withCache ? ' (with cache)' : '';
-    console.log(`${result.name}${withCache}: ${pretty(result.elapsed)}`);
-  });
+  const lines = results.map(x => ({
+    ...x,
+    pretty: pretty(x.elapsed),
+  }));
+  console.table(lines);
 };
 
 export const start = async () => {
